@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Server-Sent Events</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      const ready = () => {
+        if (!!window.EventSource) {
+          setupEventSource();
+        } else {
+          document.getElementById("root").innerHTML = "EventSource API is not supported."
+        }
+      }
+      const setupEventSource = () => {
+        const es = new EventSource("/sse");
+        const addStatus = (text) => {
+          const date = new Date();
+          document.getElementById("root").innerHTML = document.getElementById("root").innerHTML + date + ": " + text + "<br />";
+        }
+
+        es.addEventListener("message", (event) => {
+          addStatus("server sent the following: " + event.data);
+        }, false);
+        es.addEventListener("open", (event) => {
+          addStatus("connected.");
+        }, false);
+        es.addEventListener("error", (event) => {
+          if (event.eventPhase === EventSource.CLOSED) {
+            addStatus("event sourse was closed.");
+          };
+        }, false);
+      }
+      document.addEventListener("DOMContentLoaded", ready, false);
+    </script>
+  </body>
+</html>
