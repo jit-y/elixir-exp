@@ -20,7 +20,12 @@ defmodule GraphqlWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", GraphqlWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", GraphqlWeb do
+    pipe_through :api
+    resources "/users", UserController
+    resources "/posts", PostController
+  end
+
+  forward "/graph", Absinthe.Plug, schema: GraphqlWeb.Schema
+  forward "/graphql", Absinthe.Plug.GraphiQL, schema: GraphqlWeb.Schema, interface: :simple
 end
